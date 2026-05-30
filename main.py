@@ -49,6 +49,7 @@ class User(BaseModel):
     role: str
     department: str
     ceiling_level: int
+    password:str
 
 url = os.getenv("SUPABASE_URL")
 key = os.getenv("SUPABASE_KEY")
