@@ -144,6 +144,28 @@ def protected_route(token: str):
         "message": "Protected route accessed",
         "user": user
     }
+
+@app.post("/register")
+def register(user: User):
+    hashed_password = pwd_context.hash("admin123")
+
+    data = {
+        "id": user.id,
+        "org_id": user.org_id,
+        "name": user.name,
+        "role": user.role,
+        "department": user.department,
+        "ceiling_level": user.ceiling_level,
+        "password": hashed_password
+    }
+
+    response = supabase.table("users").insert(data).execute()
+
+    return {
+        "message": "User registered successfully",
+        "data": response.data
+    }
+    
 @app.get("/bfs/{start_id}")
 def bfs_traversal(start_id: str):
 
