@@ -1,5 +1,6 @@
 from pydantic import BaseModel
-from fastapi import FastAPI
+from fastapi import FastAPI,Depends
+from fastapi.security import OAuth2PasswordRequestForm
 from supabase import create_client
 from dotenv import load_dotenv
 import os
