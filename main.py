@@ -149,8 +149,7 @@ def protected_route(token: str):
 
 @app.post("/register")
 def register(user: User):
-    hashed_password = pwd_context.hash(user.password)
-
+  hashed_password = hashlib.sha256(user.password.encode()).hexdigest()
     data = {
         "id": user.id,
         "org_id": user.org_id,
