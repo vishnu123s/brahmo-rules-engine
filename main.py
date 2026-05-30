@@ -109,7 +109,20 @@ def delete_user(user_id: str):
         "message": "User deleted successfully",
         "data": data.data
     }
+@app.post("/login")
+def login(form_data: OAuth2PasswordRequestForm = Depends()):
 
+    if form_data.username != "admin" or form_data.password != "admin123":
+        return {"error": "Invalid username or password"}
+
+    access_token = create_access_token(
+        data={"sub": form_data.username}
+    )
+
+    return {
+        "access_token": access_token,
+        "token_type": "bearer"
+    }
 @app.get("/bfs/{start_id}")
 def bfs_traversal(start_id: str):
 
