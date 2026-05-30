@@ -124,6 +124,26 @@ def login(form_data: OAuth2PasswordRequestForm = Depends()):
         "access_token": access_token,
         "token_type": "bearer"
     }
+
+def verify_token(token: str):
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        return payload
+    except:
+        return None
+
+
+@app.get("/protected")
+def protected_route(token: str):
+    user = verify_token(token)
+
+    if not user:
+        return {"message": "Invalid token"}
+
+    return {
+        "message": "Protected route accessed",
+        "user": user
+    }
 @app.get("/bfs/{start_id}")
 def bfs_traversal(start_id: str):
 
