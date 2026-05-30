@@ -4,6 +4,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from supabase import create_client
 from dotenv import load_dotenv
 import os
+import hashlib
 
 from jose import JWTError, jwt
 from passlib.context import CryptContext
