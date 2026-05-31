@@ -116,18 +116,33 @@ def delete_user(user_id: str):
 @app.post("/login")
 def login(form_data: OAuth2PasswordRequestForm = Depends()):
 
-    if form_data.username != "admin" or form_data.password != "admin123":
-        return {"error": "Invalid username or password"}
+    username = form_data.username
+    password = form_data.password
+
+    hashed_password = hashlib.sha256(password.encode()).hexdigest()
+
+    response = supabase.table("users").select("*").eq("id", username).execute()
+
+    if len(response.data) == 0:
+        return {"error": "User not found"}
+
+    user = response.data[0]
+
+    if user["password"] != hashed_password:
+        return {"error": "Invalid password"}
 
     access_token = create_access_token(
-        data={"sub": form_data.username}
+        data={
+            "sub": user["id"],
+            "role": user["role"]
+        }
     )
 
     return {
         "access_token": access_token,
         "token_type": "bearer"
     }
-
+    
 def verify_token(token: str):
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
