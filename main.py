@@ -172,6 +172,11 @@ def protected_route(user: dict = Depends(get_current_user)):
 @app.post("/register")
 def register(user: User):
 
+    existing_user = supabase.table("users").select("*").eq("id", user.id).execute()
+
+if len(existing_user.data) > 0:
+    return {"error": "User already exists"}
+
     hashed_password = hashlib.sha256(user.password.encode()).hexdigest()
 
     data = {
