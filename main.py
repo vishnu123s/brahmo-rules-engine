@@ -150,15 +150,23 @@ def verify_token(token: str):
     except:
         return None
 
+def get_current_user(token: str = Depends(oauth2_scheme)):
+    payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+    return payload
+
+
+def admin_only(user: dict = Depends(get_current_user)):
+    if user.get("role") != "ADMIN":
+        return {"error": "Access denied. Admin only"}
+    return user
+
 
 @app.get("/protected")
-def protected_route(token: str = Depends(oauth2_scheme)):
-
-    payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+def protected_route(user: dict = Depends(get_current_user)):
 
     return {
         "message": "Protected route accessed",
-        "user": payload
+        "user": user
     }
     
 @app.post("/register")
