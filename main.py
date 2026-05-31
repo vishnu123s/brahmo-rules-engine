@@ -179,7 +179,7 @@ if existing_user.data:
 
 response = supabase.table("users").insert(data).execute()
 
-    hashed_password = hashlib.sha256(user.password.encode()).hexdigest()
+ hashed_password = hashlib.sha256(user.password.encode()).hexdigest()
 
     data = {
         "id": user.id,
