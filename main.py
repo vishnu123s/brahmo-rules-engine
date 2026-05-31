@@ -174,12 +174,10 @@ def register(user: User):
 
     existing_user = supabase.table("users").select("*").eq("id", user.id).execute()
 
-if existing_user.data:
-    return {"error": "User already exists"}
+    if existing_user.data:
+        return {"error": "User already exists"}
 
-response = supabase.table("users").insert(data).execute()
-
- hashed_password = hashlib.sha256(user.password.encode()).hexdigest()
+    hashed_password = hashlib.sha256(user.password.encode()).hexdigest()
 
     data = {
         "id": user.id,
