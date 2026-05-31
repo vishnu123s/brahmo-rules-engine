@@ -1,6 +1,6 @@
 from pydantic import BaseModel
-from fastapi import FastAPI,Depends
-from fastapi.security import OAuth2PasswordRequestForm
+from fastapi import FastAPI, Depends
+from fastapi.security import OAuth2PasswordBearer
 from supabase import create_client
 from dotenv import load_dotenv
 import os
@@ -14,6 +14,7 @@ from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 load_dotenv()
 
 app = FastAPI()
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
 SECRET_KEY = "mysecretkey"
 ALGORITHM = "HS256"
@@ -136,17 +137,15 @@ def verify_token(token: str):
 
 
 @app.get("/protected")
-def protected_route(token: str):
-    user = verify_token(token)
+def protected_route(token: str = Depends(oauth2_scheme)):
 
-    if not user:
-        return {"message": "Invalid token"}
+    payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
 
     return {
         "message": "Protected route accessed",
-        "user": user
+        "user": payload
     }
-
+    
 @app.post("/register")
 def register(user: User):
 
